@@ -141,7 +141,6 @@ class Maze():
                     self._animate(0.05)
                     if not self._solve_r(to_x, to_y):
                         target.draw_move(current, True)
-                        return False
                     else:
                         return True
 
