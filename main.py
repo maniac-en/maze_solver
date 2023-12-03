@@ -12,6 +12,7 @@ def main() -> None:
     m = Maze(startx, starty, row, col, cellx, celly, win)
     m._break_entrance_and_exit()
     m._break_walls_r(0, 0)
+    m._solve()
     win.wait_for_close()
 
 

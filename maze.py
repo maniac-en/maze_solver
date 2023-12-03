@@ -102,8 +102,51 @@ class Maze():
             for cell in row:
                 cell.visited = False
 
-    def _animate(self) -> None:
+    # @@@ test case pending
+    def _is_not_blocked(self, x, y, to_x, to_y) -> bool:
+        if x == to_x:
+            if to_y > y:  # going down
+                return not (self._cells[x][y].has_bottom_wall and
+                            self._cells[to_x][to_y].has_top_wall)
+            else:  # going up
+                return not (self._cells[x][y].has_top_wall and
+                            self._cells[to_x][to_y].has_bottom_wall)
+        elif y == to_y:
+            if to_x > x:  # going right
+                return not (self._cells[x][y].has_right_wall and
+                            self._cells[to_x][to_y].has_left_wall)
+            else:  # going left
+                return not (self._cells[x][y].has_left_wall and
+                            self._cells[to_x][to_y].has_right_wall)
+
+    # @@@ test case pending
+    def _solve(self) -> bool:
+        self._reset_cells_visited()
+        return self._solve_r(0, 0)
+
+    # @@@ test case pending
+    def _solve_r(self, i, j) -> bool:
+        self._animate(0.05)
+        if (i == len(self._cells) - 1 and j ==
+                len(self._cells[0]) - 1) or (-1, -1) in self._get_neighbours(i, j):
+            return True
+        else:
+            current = self._cells[i][j]
+            current.visited = True
+            for (to_x, to_y) in self._get_neighbours(i, j):
+                target = self._cells[to_x][to_y]
+                if self._is_not_blocked(
+                        i, j, to_x, to_y) and not target.visited:
+                    current.draw_move(target)
+                    self._animate(0.05)
+                    if not self._solve_r(to_x, to_y):
+                        target.draw_move(current, True)
+                        return False
+                    else:
+                        return True
+
+    def _animate(self, time=0.02) -> None:
         if self._win:
             self._win.redraw()
-            sleep(0.02)
+            sleep(time)
         return
