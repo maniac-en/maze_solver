@@ -62,7 +62,9 @@ class Cell:
                 x2 is None or\
                 y2 is None:
             return False
-        self.draw(x1, y1, x2, y2, self.move_color)
+        if self._win:
+            self._win.draw_line(
+                Line(Point(x1, y1), Point(x2, y2)), self.move_color)
         return True
 
     def __repr__(self) -> str:
