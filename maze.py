@@ -1,4 +1,5 @@
 from cell import Cell
+from graphics import Line, Point
 from time import sleep
 import random
 
@@ -118,6 +119,26 @@ class Maze():
             else:  # going left
                 return not (self._cells[x][y].has_left_wall and
                             self._cells[to_x][to_y].has_right_wall)
+
+    # @@@ test case pending
+    def _draw_start_line(self) -> bool:
+        start_x, start_y = self._cells[0][0].get_center()
+        if start_x is not None and start_y is not None and\
+                self._win:
+            self._win.draw_line(Line(Point(start_x, start_y - self.y1),
+                                     Point(start_x, start_y)), "red")
+            return True
+        return False
+
+    # @@@ test case pending
+    def _draw_end_line(self) -> bool:
+        end_x, end_y = self._cells[-1][-1].get_center()
+        if end_x is not None and end_y is not None and\
+                self._win:
+            self._win.draw_line(Line(Point(end_x, end_y + self.y1),
+                                     Point(end_x, end_y)), "red")
+            return True
+        return False
 
     # @@@ test case pending
     def _solve(self) -> bool:
