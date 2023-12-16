@@ -55,6 +55,9 @@ class Line:
         self.p1 = p1
         self.p2 = p2
 
+    def __eq__(self, t) -> bool:
+        return self.p1 == t.p1 and self.p2 == t.p2
+
     def draw(self, canvas, fill_color="black") -> None:
         canvas.create_line(
             self.p1.x,

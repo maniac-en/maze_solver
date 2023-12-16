@@ -1,7 +1,7 @@
 import unittest
 from cell import Cell
 from maze import Maze
-from graphics import Point
+from graphics import Point, Line
 
 
 class TestCellClass(unittest.TestCase):
@@ -117,6 +117,42 @@ class TestCellClass(unittest.TestCase):
         expected_repr = f"""{x1}, {y1} {x2}, {y2} True True True True"""
         self.assertEqual(repr(c), expected_repr)
 
+
+class TestPointClass(unittest.TestCase):
+
+    def test_point_constructor(self):
+        p = Point(0, 0)
+        self.assertEqual(p.x, 0)
+        self.assertEqual(p.y, 0)
+
+    def test_point_equals(self):
+        self.assertEqual(Point(0, 0) == Point(0, 0), True)
+        self.assertEqual(Point(0, 1) == Point(0, 0), False)
+
+
+class TestLineClass(unittest.TestCase):
+
+    def test_line_constructor(self):
+        l = Line(Point(0, 0), Point(0, 1))
+        self.assertEqual(l.p1 == Point(0, 0), True)
+        self.assertEqual(l.p2 == Point(0, 1), True)
+
+    def test_line_equals(self):
+        l = Line(Point(0, 0), Point(0, 1))
+        self.assertEqual(l == Line(Point(0, 0), Point(0, 1)), True)
+
+
+class TestMazeClass(unittest.TestCase):
+
+    def test_maze_constructor(self):
+        m = Maze(0, 0, 10, 12, 11, 13)
+        self.assertEqual(m.x1 == 0, True)
+        self.assertEqual(m.y1 == 0, True)
+        self.assertEqual(m.num_rows == 10, True)
+        self.assertEqual(m.num_cols == 12, True)
+        self.assertEqual(m.cell_size_x == 11, True)
+        self.assertEqual(m.cell_size_y == 13, True)
+
     def test_maze_create_cells(self):
         num_rows, num_cols = 10, 12
         m = Maze(0, 0, num_rows, num_cols, 10, 10)
@@ -129,15 +165,6 @@ class TestCellClass(unittest.TestCase):
         m._break_entrance_and_exit()
         self.assertEqual(m._cells[0][0].has_top_wall, False)
         self.assertEqual(m._cells[-1][-1].has_bottom_wall, False)
-
-    def test_point(self):
-        p = Point(0, 0)
-        self.assertEqual(p.x, 0)
-        self.assertEqual(p.y, 0)
-
-    def test_point_equals(self):
-        self.assertEqual(Point(0, 0) == Point(0, 0), True)
-        self.assertEqual(Point(0, 1) == Point(0, 0), False)
 
 
 if __name__ == "__main__":
