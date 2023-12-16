@@ -1,7 +1,7 @@
-import unittest
 from cell import Cell
-from maze import Maze
 from graphics import Point, Line
+from maze import Maze
+import unittest
 
 
 class TestCellClass(unittest.TestCase):
@@ -133,38 +133,122 @@ class TestPointClass(unittest.TestCase):
 class TestLineClass(unittest.TestCase):
 
     def test_line_constructor(self):
-        l = Line(Point(0, 0), Point(0, 1))
-        self.assertEqual(l.p1 == Point(0, 0), True)
-        self.assertEqual(l.p2 == Point(0, 1), True)
-
-    def test_line_equals(self):
-        l = Line(Point(0, 0), Point(0, 1))
-        self.assertEqual(l == Line(Point(0, 0), Point(0, 1)), True)
-
-
-class TestMazeClass(unittest.TestCase):
-
-    def test_maze_constructor(self):
-        m = Maze(0, 0, 10, 12, 11, 13)
-        self.assertEqual(m.x1 == 0, True)
-        self.assertEqual(m.y1 == 0, True)
-        self.assertEqual(m.num_rows == 10, True)
-        self.assertEqual(m.num_cols == 12, True)
-        self.assertEqual(m.cell_size_x == 11, True)
-        self.assertEqual(m.cell_size_y == 13, True)
+        p = Line(Point(0, 0), Point(0, 1))
+        self.assertEqual(p.p1 == Point(0, 0), True)
+        self.assertEqual(p.p2 == Point(0, 1), True)
 
     def test_maze_create_cells(self):
         num_rows, num_cols = 10, 12
-        m = Maze(0, 0, num_rows, num_cols, 10, 10)
+        m = Maze(0, 0, num_rows, num_cols, 11, 13)
         self.assertEqual(len(m._cells), num_cols)
         self.assertEqual(len(m._cells[0]), num_rows)
 
+    def test_maze_draw_cell(self):
+        m = Maze(9, 8, 10, 12, 11, 13)
+        for i, cell_col in enumerate(m._cells):
+            for j, cell in enumerate(cell_col):
+                x_adjust, y_adjust = 9 + i * 10, 8 + j * 12
+
+                # point 1 for top line and left line
+                p1 = Point(i + x_adjust, j + y_adjust)
+
+                # point 2 for left line
+                p2 = Point(i + x_adjust, j + y_adjust + 13)
+                self.assertEqual(cell.left_line == Line(p1, p2), True)
+                # point 2 for top line
+                p2 = Point(i + x_adjust + 11, j + y_adjust)
+                self.assertEqual(cell.top_line == Line(p1, p2), True)
+
+                # point 2 for right line and bottom line
+                p2 = Point(i + x_adjust + 11, j + y_adjust + 13)
+
+                # point 1 for right line
+                p1 = Point(i + x_adjust + 11, j + y_adjust)
+                self.assertEqual(cell.right_line == Line(p1, p2), True)
+                # point 1 for bottom line
+                p1 = Point(i + x_adjust, j + y_adjust + 13)
+                self.assertEqual(cell.bottom_line == Line(p1, p2), True)
+
     def test_maze_break_enterance_and_exit(self):
-        num_rows, num_cols = 10, 12
-        m = Maze(0, 0, num_rows, num_cols, 10, 10)
+        m = Maze(0, 0, 10, 12, 11, 13)
         m._break_entrance_and_exit()
         self.assertEqual(m._cells[0][0].has_top_wall, False)
         self.assertEqual(m._cells[-1][-1].has_bottom_wall, False)
+
+    def test_maze_get_neighbours(self):
+        m = Maze(9, 8, 10, 12, 11, 13)
+        for i, cell_col in enumerate(m._cells):
+            for j, cell in enumerate(cell_col):
+                expected_neighbours = []
+                if i != 0:
+                    expected_neighbours.append((i - 1, j))
+                if j != 0:
+                    expected_neighbours.append((i, j - 1))
+                if i < 11:
+                    expected_neighbours.append((i + 1, j))
+                if j < 9:
+                    expected_neighbours.append((i, j + 1))
+                for ix, n in enumerate(m._get_neighbours(i, j)):
+                    self.assertEqual(expected_neighbours[ix] == n, True)
+
+    def test_maze_break_walls_r(self):
+        m = Maze(9, 8, 10, 12, 11, 13)
+        m._break_entrance_and_exit()
+        m._break_walls_r(0, 0)
+        self.assertEqual(m._cells[-1][-1].visited, True)
+
+    def test_maze_reset_cells_visited(self):
+        m = Maze(9, 8, 10, 12, 11, 13)
+        m._break_entrance_and_exit()
+        m._break_walls_r(0, 0)
+        m._reset_cells_visited()
+        for i, cell_col in enumerate(m._cells):
+            for j, cell in enumerate(cell_col):
+                self.assertEqual(not cell.visited, True)
+
+    def test_maze_is_not_blocked(self):
+        m = Maze(9, 8, 10, 12, 11, 13)
+        m._break_entrance_and_exit()
+
+        m._cells[0][0].has_bottom_wall = False
+        m._cells[0][1].has_top_wall = False
+        self.assertEqual(m._is_not_blocked(0, 0, 0, 1), True)
+
+        m._cells[-1][-1].has_top_wall = False
+        m._cells[-2][-1].has_bottom_wall = False
+        self.assertEqual(m._is_not_blocked(11, 8, 11, 9), True)
+
+        m._cells[0][0].has_right_wall = False
+        m._cells[1][0].has_left_wall = False
+        self.assertEqual(m._is_not_blocked(0, 0, 1, 0), True)
+
+        m._cells[-1][-1].has_left_wall = False
+        m._cells[-1][-2].has_right_wall = False
+        self.assertEqual(m._is_not_blocked(10, 9, 11, 9), True)
+
+        # impossible move
+        self.assertEqual(m._is_not_blocked(4, 4, 5, 5), False)
+
+        # expected exception
+        self.assertEqual(m._is_not_blocked(100, 100, 100, 100), False)
+
+    def test_maze_start_end_lines(self):
+        m = Maze(9, 8, 10, 12, 11, 13)
+        self.assertEqual(m._draw_start_line(), True)
+        self.assertEqual(m._draw_end_line(), True)
+
+    def test_maze_solve(self):
+        m = Maze(9, 8, 10, 12, 11, 13)
+        m._break_entrance_and_exit()
+        m._break_walls_r(0, 0)
+        self.assertEqual(m._solve(), True)
+
+    def test_maze_solve_r(self):
+        m = Maze(9, 8, 10, 12, 11, 13)
+        m._break_entrance_and_exit()
+        m._break_walls_r(0, 0)
+        m._reset_cells_visited()
+        self.assertEqual(m._solve_r(0, 0), True)
 
 
 if __name__ == "__main__":

@@ -53,7 +53,6 @@ class Maze():
                         len(self._cells[0]) - 1)
         return
 
-    # @@@ test case pending
     def _get_neighbours(self, i, j) -> list:
         neighbours = []
         if i != 0:
@@ -66,7 +65,6 @@ class Maze():
             neighbours.append((i, j + 1))
         return neighbours
 
-    # @@@ test case pending
     def _break_walls_r(self, i, j) -> None:
         self._cells[i][j].visited = True
         while not self._cells[-1][-1].visited:
@@ -97,55 +95,55 @@ class Maze():
                 self._draw_cell(self._cells[to_i][to_j], to_i, to_j)
                 return self._break_walls_r(to_i, to_j)
 
-    # @@@ test case pending
     def _reset_cells_visited(self) -> None:
         for row in self._cells:
             for cell in row:
                 cell.visited = False
 
-    # @@@ test case pending
     def _is_not_blocked(self, x, y, to_x, to_y) -> bool:
-        if x == to_x:
-            if to_y > y:  # going down
-                return not (self._cells[x][y].has_bottom_wall and
-                            self._cells[to_x][to_y].has_top_wall)
-            else:  # going up
-                return not (self._cells[x][y].has_top_wall and
-                            self._cells[to_x][to_y].has_bottom_wall)
-        elif y == to_y:
-            if to_x > x:  # going right
-                return not (self._cells[x][y].has_right_wall and
-                            self._cells[to_x][to_y].has_left_wall)
-            else:  # going left
-                return not (self._cells[x][y].has_left_wall and
-                            self._cells[to_x][to_y].has_right_wall)
+        try:
+            if x == to_x:
+                if to_y > y:  # going down
+                    return not (self._cells[x][y].has_bottom_wall and
+                                self._cells[to_x][to_y].has_top_wall)
+                else:  # going up
+                    return not (self._cells[x][y].has_top_wall and
+                                self._cells[to_x][to_y].has_bottom_wall)
+            elif y == to_y:
+                if to_x > x:  # going right
+                    return not (self._cells[x][y].has_right_wall and
+                                self._cells[to_x][to_y].has_left_wall)
+                else:  # going left
+                    return not (self._cells[x][y].has_left_wall and
+                                self._cells[to_x][to_y].has_right_wall)
+        except IndexError as e:
+            print("\n\nCaught exception at Maze._is_not_blocked function")
+            print(f"{e} for {x}, {y}...{to_x}, {to_y}\n")
+            return False
+        return False
 
-    # @@@ test case pending
     def _draw_start_line(self) -> bool:
         start_x, start_y = self._cells[0][0].get_center()
-        if start_x is not None and start_y is not None and\
-                self._win:
-            self._win.draw_line(Line(Point(start_x, start_y - self.y1),
-                                     Point(start_x, start_y)), "red")
+        if start_x is not None and start_y is not None:
+            if self._win:
+                self._win.draw_line(Line(Point(start_x, start_y - self.y1),
+                                         Point(start_x, start_y)), "red")
             return True
         return False
 
-    # @@@ test case pending
     def _draw_end_line(self) -> bool:
         end_x, end_y = self._cells[-1][-1].get_center()
-        if end_x is not None and end_y is not None and\
-                self._win:
-            self._win.draw_line(Line(Point(end_x, end_y + self.y1),
-                                     Point(end_x, end_y)), "red")
+        if end_x is not None and end_y is not None:
+            if self._win:
+                self._win.draw_line(Line(Point(end_x, end_y + self.y1),
+                                         Point(end_x, end_y)), "red")
             return True
         return False
 
-    # @@@ test case pending
     def _solve(self) -> bool:
         self._reset_cells_visited()
         return self._solve_r(0, 0)
 
-    # @@@ test case pending
     def _solve_r(self, i, j) -> bool:
         self._animate(0.05)
         if (i == len(self._cells) - 1 and j ==
