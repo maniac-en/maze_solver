@@ -3,6 +3,11 @@ from maze import Maze
 
 
 def main() -> None:
+    """ driver code for maze builder
+
+    Maze class instantiation and it's related methods are called here!
+    """
+
     startx, starty = 25, 25
     row, col = 15, 15
     cellx, celly = 50, 50
