@@ -147,9 +147,18 @@ class Maze():
 
     # @@@ test case pending
     def _solve_r(self, i, j) -> bool:
+        end_cell_ix = len(self._cells) - 1
+        end_cell_iy = len(self._cells[0]) - 1
         self._animate(0.05)
-        if (i == len(self._cells) - 1 and j ==
-                len(self._cells[0]) - 1) or (-1, -1) in self._get_neighbours(i, j):
+        if (i == end_cell_ix and j == end_cell_iy):
+            return True
+        elif (end_cell_ix, end_cell_iy) in self._get_neighbours(i, j) and\
+                self._is_not_blocked(i, j, end_cell_ix, end_cell_iy):
+            current = self._cells[i][j]
+            target = self._cells[end_cell_ix][end_cell_iy]
+            current.visited = True
+            current.draw_move(target)
+            self._animate(0.05)
             return True
         else:
             current = self._cells[i][j]
