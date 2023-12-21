@@ -1,15 +1,20 @@
 from graphics import Window
 from maze import Maze
+import click
 
 
-def main() -> None:
-    """ driver code for maze builder
-
-    Maze class instantiation and it's related methods are called here!
-    """
+@click.command()
+@click.option(
+    '--maze-size',
+    type=(int, int),
+    default=(15, 15),
+    show_default=True,
+    help='row, column for the maze')
+def main(maze_size) -> None:
+    """Welcome to Maniac's Maze solver"""
 
     startx, starty = 25, 25
-    row, col = 15, 15
+    row, col = maze_size
     cellx, celly = 50, 50
     height = 2 * startx + row * cellx
     width = 2 * starty + col * celly
@@ -21,6 +26,3 @@ def main() -> None:
     m._solve()
     m._draw_end_line()
     win.wait_for_close()
-
-
-main()
