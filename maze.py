@@ -143,7 +143,7 @@ class Maze():
             neighbours.append((i, j + 1))
         return neighbours
 
-    def _break_walls_r(self, i, j) -> None:
+    def _break_walls_r(self, i, j) -> bool:
         """Break Maze Cell walls recursively to build the Maze
 
         This first invocation of this method is done from driver code starting
@@ -160,9 +160,8 @@ class Maze():
                 - Invoke the Maze._break_walls_r taking the randomly selected
                   neighbour as input
             - If there's no neighbour available which it not visited:
-                - Randomly select any of the neighbour
-                - Invoke the Maze._break_walls_r taking the randomly selected
-                  neighbour as input
+                - Backtrack to previous cell and continue looking for the next
+                  cell which has not visited neighbours.
         """
 
         self._cells[i][j].visited = True
@@ -171,28 +170,28 @@ class Maze():
                 lambda c: not self._cells[c[0]][c[1]].visited,
                 self._get_neighbours(i, j))]
             if len(possible_directions) == 0:
-                self._draw_cell(self._cells[i][j], i, j)
-                i, j = random.choice(self._get_neighbours(i, j))
-            else:
-                to_i, to_j = random.choice(possible_directions)
-                if j == to_j:  # same row movement
-                    if to_i > i:
-                        self._cells[i][j].has_right_wall = False
-                        self._cells[to_i][to_j].has_left_wall = False
-                    else:
-                        self._cells[i][j].has_left_wall = False
-                        self._cells[to_i][to_j].has_right_wall = False
-                elif i == to_i:  # same column movement
-                    if to_j > j:
-                        self._cells[i][j].has_bottom_wall = False
-                        self._cells[to_i][to_j].has_top_wall = False
-                    else:
-                        self._cells[i][j].has_top_wall = False
-                        self._cells[to_i][to_j].has_bottom_wall = False
+                return False
+            to_i, to_j = random.choice(possible_directions)
+            if j == to_j:  # same row movement
+                if to_i > i:
+                    self._cells[i][j].has_right_wall = False
+                    self._cells[to_i][to_j].has_left_wall = False
+                else:
+                    self._cells[i][j].has_left_wall = False
+                    self._cells[to_i][to_j].has_right_wall = False
+            elif i == to_i:  # same column movement
+                if to_j > j:
+                    self._cells[i][j].has_bottom_wall = False
+                    self._cells[to_i][to_j].has_top_wall = False
+                else:
+                    self._cells[i][j].has_top_wall = False
+                    self._cells[to_i][to_j].has_bottom_wall = False
 
-                self._draw_cell(self._cells[i][j], i, j)
-                self._draw_cell(self._cells[to_i][to_j], to_i, to_j)
-                return self._break_walls_r(to_i, to_j)
+            self._draw_cell(self._cells[i][j], i, j)
+            self._draw_cell(self._cells[to_i][to_j], to_i, to_j)
+            if not self._break_walls_r(to_i, to_j):
+                continue
+        return True
 
     def _reset_cells_visited(self) -> None:
         """Mark all Maze Cells as not visited"""

@@ -194,7 +194,7 @@ class TestLineClass(unittest.TestCase):
     def test_maze_break_walls_r(self):
         m = Maze(9, 8, 10, 12, 11, 13)
         m._break_entrance_and_exit()
-        m._break_walls_r(0, 0)
+        self.assertEqual(m._break_walls_r(0, 0), True)
         self.assertEqual(m._cells[-1][-1].visited, True)
 
     def test_maze_reset_cells_visited(self):
