@@ -74,7 +74,7 @@ class Maze():
         self._cells = []
         for c in range(self.num_cols):
             self._cells.append([])
-            for r in range(self.num_rows):
+            for _ in range(self.num_rows):
                 self._cells[c].append(Cell(self._win))
 
         for i, cell_col in enumerate(self._cells):
@@ -309,6 +309,7 @@ class Maze():
                         target.draw_move(current, True)
                     else:
                         return True
+            return False
 
     def _animate(self, time=0.02) -> None:
         """Redraw the graphics.Window with a delay to visualise drawing"""
