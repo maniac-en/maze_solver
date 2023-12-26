@@ -39,4 +39,7 @@ Options:
 ```
 
 ## Demo Video
+- Red path is overall solution and partial gray paths are backtracked paths.
+- Video somehow doesn't load in firefox, works fine in chrome/chromium based!
 
+https://github.com/maniac-en/maze_solver/assets/45049766/fa1422a5-7fb5-4bb7-91e5-e889afc7cb7f
