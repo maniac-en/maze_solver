@@ -6,9 +6,9 @@ Maze solving program built using python [tkinter](https://tkdocs.com/)
 
 ## What and why?
 
-This program is built for educational purpose of visualizing the [Breadth-first
-search](https://en.wikipedia.org/wiki/Breadth-first_search) algorithm using a
-maze where-in the maze is built as well as solved both using the BFS!
+This program is built for educational purpose of visualizing the [Depth-first
+search](https://en.wikipedia.org/wiki/Depth-first_search) algorithm using a
+maze where-in the maze is built as well as solved both using the DFS!
 
 ## How to run
 
