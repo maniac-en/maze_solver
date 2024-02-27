@@ -42,7 +42,7 @@ class Window():
         """Redraws the Window object"""
 
         self.__root.update_idletasks()
-        self.__root.update()
+        # self.__root.update()
         return
 
     def wait_for_close(self) -> None:
